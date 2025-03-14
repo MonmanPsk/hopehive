@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/core/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,16 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HopeHive',
       theme: ThemeData(),
-      home: const MyHomePage(),
+      initialRoute: AppRoutes.onboarding,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center();
   }
 }
