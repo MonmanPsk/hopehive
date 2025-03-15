@@ -3,7 +3,7 @@ import 'package:hopehive/features/auth/presentation/forgot_password_screen.dart'
 import 'package:hopehive/features/auth/presentation/login_screen.dart';
 import 'package:hopehive/features/auth/presentation/register_screen.dart';
 import 'package:hopehive/features/home/home_page.dart';
-import 'package:hopehive/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:hopehive/features/onboarding/onboarding_page.dart';
 
 class AppRoutes {
   static const String onboarding = '/onboarding';
@@ -15,7 +15,7 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case onboarding:
-        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
+        return MaterialPageRoute(builder: (_) => const OnboardingPage());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case register:

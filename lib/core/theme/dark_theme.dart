@@ -6,6 +6,9 @@ class DarkTheme {
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: const Color(0xFF00A8AA),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+      ),
       fontFamily: GoogleFonts.kanit().fontFamily,
       textTheme: const TextTheme(
         displayLarge: TextStyle(fontSize: 36),

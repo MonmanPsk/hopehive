@@ -6,11 +6,14 @@ class LightTheme {
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: const Color(0xFF00A8AA),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+      ),
       fontFamily: GoogleFonts.kanit().fontFamily,
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 36),
-        displayMedium: TextStyle(fontSize: 32),
-        displaySmall: TextStyle(fontSize: 24),
+        displayLarge: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+        displayMedium: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         titleLarge: TextStyle(fontSize: 20),
         titleMedium: TextStyle(fontSize: 16),
         titleSmall: TextStyle(fontSize: 15),
