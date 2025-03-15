@@ -39,6 +39,9 @@ dependencies:
   google_fonts: ^6.2.1
   smooth_page_indicator: ^1.2.1
   flutter_riverpod: ^2.6.1
+  material_design_icons_flutter: 7.0.7296
+  firebase_core: ^3.12.1
+  firebase_auth: ^5.5.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +71,7 @@ flutter:
     - assets/images/onboarding2.gif
     - assets/images/onboarding3.gif
     - assets/images/onboarding4.gif
+    - assets/logo/text_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "903091146149",
+    "project_id": "hopehive-8e99e",
+    "storage_bucket": "hopehive-8e99e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903091146149:android:fe82e8b5cea7c3061d2c4c",
+        "android_client_info": {
+          "package_name": "com.example.hopehive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmKgf5np8SdB2GcrWHerglm8V-phUUMWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

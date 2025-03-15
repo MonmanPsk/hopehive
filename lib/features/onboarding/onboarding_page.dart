@@ -92,6 +92,7 @@ class OnboardingPage extends ConsumerWidget {
                       onPressed: onboardingNotifier.previousPage,
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
+                        backgroundColor: Colors.white,
                         foregroundColor: Theme.of(context).primaryColor,
                       ),
                       child: const Icon(Icons.arrow_back_ios_rounded, size: 20),
@@ -111,6 +112,7 @@ class OnboardingPage extends ConsumerWidget {
                     onPressed: onboardingNotifier.nextPage,
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
+                      backgroundColor: Colors.white,
                       foregroundColor: Theme.of(context).primaryColor,
                     ),
                     child:

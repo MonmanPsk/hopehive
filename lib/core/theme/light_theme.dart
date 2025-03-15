@@ -22,6 +22,40 @@ class LightTheme {
         bodySmall: TextStyle(fontSize: 9),
         labelLarge: TextStyle(fontSize: 18),
         labelMedium: TextStyle(fontSize: 16),
+      ).apply(
+        bodyColor: const Color(0xFF2A2A2A),
+        displayColor: const Color(0xFF2A2A2A),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF00A8AA).withOpacity(0.1),
+        border: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: const Color(0xFF00A8AA).withOpacity(0.2)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: const Color(0xFF00A8AA).withOpacity(0.2)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF00A8AA)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        hintStyle: TextStyle(
+          fontSize: 15,
+          color: const Color(0xFF696969).withOpacity(0.9),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF00A8AA),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       ),
     );
   }
