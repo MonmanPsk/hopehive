@@ -7,7 +7,6 @@ class OnboardingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onboardingState = ref.watch(onboardingProvider);
     final onboardingData = ref.read(onboardingProvider.notifier).onboardingData;
     final pageController = ref.read(onboardingProvider.notifier).pageController;
 

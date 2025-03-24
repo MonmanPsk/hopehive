@@ -36,6 +36,4 @@ class OnboardingState extends StateNotifier<int> {
   }
 }
 
-final onboardingProvider = StateNotifierProvider<OnboardingState, int>((ref) {
-  return OnboardingState();
-});
+final onboardingProvider = StateNotifierProvider<OnboardingState, int>((ref) => OnboardingState());
