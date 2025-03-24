@@ -47,6 +47,18 @@ class LightTheme {
           fontSize: 15,
           color: const Color(0xFF696969).withOpacity(0.9),
         ),
+        errorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFF94449)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFF94449)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        errorStyle: const TextStyle(
+          fontSize: 12,
+          color: Color(0xFFF94449),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
