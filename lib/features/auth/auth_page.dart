@@ -147,7 +147,7 @@ class AuthPage extends ConsumerWidget {
                 children: [
                   SizedBox(
                     child: ElevatedButton(
-                      onPressed: () => authService.loginWithGoogle(ref),
+                      onPressed: () => authService.loginWithGoogle(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
                             const Color(0xFF00A8AA).withOpacity(0.1),
@@ -159,7 +159,7 @@ class AuthPage extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => authService.loginWithFacebook(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00A8AA).withOpacity(0.1),
                       foregroundColor: Theme.of(context).primaryColor,

@@ -22,6 +22,14 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8
     }
 
+    def localProperties = new Properties()
+    def localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.withInputStream { stream ->
+            localProperties.load(stream)
+        }
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.hopehive"
@@ -31,6 +39,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Read values from local.properties and pass them as resource values
+        resValue "string", "facebook_app_id", "\"" + localProperties.getProperty("FACEBOOK_APP_ID", "") + "\""
+        resValue "string", "facebook_client_token", "\"" + localProperties.getProperty("FACEBOOK_CLIENT_TOKEN", "") + "\""
     }
 
     buildTypes {
@@ -44,4 +56,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation 'com.facebook.android:facebook-login:18.0.2'
 }
