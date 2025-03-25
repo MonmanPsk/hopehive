@@ -26,9 +26,13 @@ class AuthPage extends ConsumerWidget {
     });
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30, top: 110),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 30,
+          right: 30,
+          top: MediaQuery.of(context).size.height * 0.21,
+          bottom: 20,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
@@ -96,7 +100,8 @@ class AuthPage extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/forgot_password'),
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.forgotPassword),
                   child: Text(
                     'Forgot your Password?',
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -178,7 +183,8 @@ class AuthPage extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/register'),
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.register),
                     child: Text(
                       'Create new account',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(

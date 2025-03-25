@@ -67,7 +67,7 @@ class OnboardingPage extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () =>
-                      Navigator.pushReplacementNamed(context, '/login'),
+                      Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Theme.of(context).primaryColor,
