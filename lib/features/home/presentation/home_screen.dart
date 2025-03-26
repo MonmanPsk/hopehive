@@ -91,7 +91,7 @@ class HomeScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withOpacity(0.2),
                       blurRadius: 5,
                     ),
                   ],
@@ -147,6 +147,7 @@ class HomeScreen extends ConsumerWidget {
           SizedBox(
             height: length,
             child: TabBarView(
+              clipBehavior: Clip.none,
               controller: tabController,
               children: [
                 ListView.builder(
@@ -163,7 +164,7 @@ class HomeScreen extends ConsumerWidget {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withOpacity(0.2),
                             blurRadius: 5,
                           ),
                         ],
@@ -218,7 +219,7 @@ class HomeScreen extends ConsumerWidget {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withOpacity(0.2),
                             blurRadius: 5,
                           ),
                         ],

@@ -4,10 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 class LightTheme {
   static ThemeData get theme {
     return ThemeData(
-      brightness: Brightness.light,
-      primaryColor: const Color(0xFF00A8AA),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: Colors.transparent,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF00A8AA),
+        brightness: Brightness.light,
+        primary: const Color(0xFF00A8AA),
+        surface: Colors.white,
       ),
       fontFamily: GoogleFonts.kanit().fontFamily,
       textTheme: const TextTheme(
@@ -25,6 +26,13 @@ class LightTheme {
       ).apply(
         bodyColor: const Color(0xFF2A2A2A),
         displayColor: const Color(0xFF2A2A2A),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
