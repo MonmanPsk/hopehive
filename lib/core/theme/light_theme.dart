@@ -40,16 +40,16 @@ class LightTheme {
         border: OutlineInputBorder(
           borderSide:
               BorderSide(color: const Color(0xFF00A8AA).withOpacity(0.2)),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
           borderSide:
               BorderSide(color: const Color(0xFF00A8AA).withOpacity(0.2)),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF00A8AA)),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color(0xFF00A8AA)),
+          borderRadius: BorderRadius.circular(10),
         ),
         hintStyle: TextStyle(
           fontSize: 15,
@@ -63,13 +63,13 @@ class LightTheme {
           fontSize: 15,
           color: Color(0xFF00A8AA),
         ),
-        errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFF94449)),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color(0xFFF94449)),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFF94449)),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color(0xFFF94449)),
+          borderRadius: BorderRadius.circular(10),
         ),
         errorStyle: const TextStyle(
           fontSize: 12,
