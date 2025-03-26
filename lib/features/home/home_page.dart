@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const HomeScreen(),
+    HomeScreen(),
     const MessagePage(),
     const NotificationPage(),
     const ProfilePage(),
@@ -44,22 +44,27 @@ class _HomePageState extends State<HomePage> {
         index: _currentIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.chat_rounded), label: 'Chat'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_rounded), label: 'Notification'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded), label: 'Profile'),
-        ],
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          fixedColor: Theme.of(context).primaryColor,
+          unselectedItemColor: Colors.grey,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home_rounded), label: 'Home'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.chat_rounded), label: 'Chat'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.notifications_rounded), label: 'Notification'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person_rounded), label: 'Profile'),
+          ],
+        ),
       ),
     );
   }
