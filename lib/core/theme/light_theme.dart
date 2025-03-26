@@ -47,6 +47,14 @@ class LightTheme {
           fontSize: 15,
           color: const Color(0xFF696969).withOpacity(0.9),
         ),
+        labelStyle: TextStyle(
+          fontSize: 15,
+          color: const Color(0xFF696969).withOpacity(0.9),
+        ),
+        floatingLabelStyle: const TextStyle(
+          fontSize: 15,
+          color: Color(0xFF00A8AA),
+        ),
         errorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFFF94449)),
           borderRadius: BorderRadius.all(Radius.circular(10)),

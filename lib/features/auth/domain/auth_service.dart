@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:hopehive/features/auth/domain/login_provider.dart';
+import 'package:hopehive/features/auth/domain/register_provider.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -56,8 +57,27 @@ class AuthService {
         return 'No user found for that email.';
       case 'wrong-password':
         return 'Incorrect password. Please try again.';
+      case 'weak-password':
+        return 'Password should be at least 6 characters.';
+      case 'email-already-in-use':
+        return 'The account already exists for that email.';
       default:
         return 'Login failed. Please check your credentials.';
+    }
+  }
+
+  Future<void> register(WidgetRef ref, String email, String password) async {
+    ref.read(registerIsLoadingProvider.notifier).state = true;
+    ref.read(registerErrorMessageProvider.notifier).state = null;
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      ref.read(registerErrorMessageProvider.notifier).state =
+          _handleError(e.code);
+    } finally {
+      ref.read(registerIsLoadingProvider.notifier).state = false;
     }
   }
 }
