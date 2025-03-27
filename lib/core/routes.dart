@@ -27,7 +27,7 @@ class AppRoutes {
       case home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case setting:
-        return MaterialPageRoute(builder: (_) => const SettingPage());
+        return MaterialPageRoute(builder: (_) => SettingPage());
       default:
         return MaterialPageRoute(builder: (_) => const Center());
     }
