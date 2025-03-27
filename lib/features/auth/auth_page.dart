@@ -17,13 +17,6 @@ class AuthPage extends ConsumerWidget {
     final isLoading = ref.watch(isLoadingProvider);
     final errorMessage = ref.watch(errorMessageProvider);
     final authService = AuthService();
-    final authState = ref.watch(authStateProvider);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authState.value != null) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-      }
-    });
 
     return Scaffold(
       body: SingleChildScrollView(
