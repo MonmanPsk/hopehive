@@ -4,7 +4,7 @@ import 'package:hopehive/features/auth/auth_page.dart';
 import 'package:hopehive/features/auth/presentation/register_screen.dart';
 import 'package:hopehive/features/auth/presentation/forgot_password_screen.dart';
 import 'package:hopehive/features/home/home_page.dart';
-import 'package:hopehive/features/profile/presentation/setting_screen.dart';
+import 'package:hopehive/features/setting/setting_page.dart';
 
 class AppRoutes {
   static const String onboarding = '/onboarding';
@@ -27,7 +27,7 @@ class AppRoutes {
       case home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case setting:
-        return MaterialPageRoute(builder: (_) => const SettingScreen());
+        return MaterialPageRoute(builder: (_) => const SettingPage());
       default:
         return MaterialPageRoute(builder: (_) => const Center());
     }
