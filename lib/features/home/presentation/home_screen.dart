@@ -35,23 +35,25 @@ class HomeScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 RichText(
-                    text: TextSpan(
-                  text: 'Welcome,\n',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall!
-                      .copyWith(fontWeight: FontWeight.normal),
-                  children: [
-                    TextSpan(
-                      text: FirebaseAuth.instance.currentUser!.displayName!
-                          .split(' ')[0],
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(color: Theme.of(context).primaryColor),
-                    ),
-                  ],
-                )),
+                  text: TextSpan(
+                    text: 'Welcome,\n',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall!
+                        .copyWith(fontWeight: FontWeight.normal),
+                    children: [
+                      TextSpan(
+                        text: FirebaseAuth.instance.currentUser?.displayName
+                                ?.split(' ')[0] ??
+                            'User',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(color: Theme.of(context).primaryColor),
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
                   height: 60,
                   width: 60,

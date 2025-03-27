@@ -6,14 +6,13 @@ import 'package:hopehive/features/auth/domain/login_provider.dart';
 import 'package:hopehive/features/auth/domain/register_provider.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   Future<void> login(WidgetRef ref, String email, String password) async {
     ref.read(isLoadingProvider.notifier).state = true;
     ref.read(errorMessageProvider.notifier).state = null;
 
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
       ref.read(errorMessageProvider.notifier).state = _handleError(e.code);
     } finally {
@@ -66,16 +65,29 @@ class AuthService {
     }
   }
 
-  Future<void> register(WidgetRef ref, String email, String password) async {
+  Future<bool> register(
+    WidgetRef ref,
+    String email,
+    String password,
+    String firstname,
+    String lastname,
+  ) async {
     ref.read(registerIsLoadingProvider.notifier).state = true;
     ref.read(registerErrorMessageProvider.notifier).state = null;
 
     try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance.currentUser
+          ?.updateDisplayName('$firstname $lastname');
+      await FirebaseAuth.instance.signOut();
+      
+      return true;
     } on FirebaseAuthException catch (e) {
       ref.read(registerErrorMessageProvider.notifier).state =
           _handleError(e.code);
+          
+      return false;
     } finally {
       ref.read(registerIsLoadingProvider.notifier).state = false;
     }

@@ -19,7 +19,6 @@ class RegisterScreen extends ConsumerWidget {
     final isLoading = ref.watch(registerIsLoadingProvider);
     final errorMessage = ref.watch(registerErrorMessageProvider);
     final authService = AuthService();
-    final authState = ref.watch(registerAuthStateProvider);
 
     return Scaffold(
       appBar: AppBar(),
@@ -146,13 +145,16 @@ class RegisterScreen extends ConsumerWidget {
                       ? null
                       : () async {
                           if (_formKey.currentState!.validate()) {
-                            await authService.register(
+                            bool isSuccess = await authService.register(
                               ref,
                               _emailController.text,
                               _passwordController.text,
+                              _firstNameController.text,
+                              _lastNameController.text,
                             );
+
                             if (!context.mounted) return;
-                            if (authState.value != null) {
+                            if (isSuccess) {
                               Navigator.of(context).pop();
                             }
                           }

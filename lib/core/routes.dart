@@ -8,7 +8,7 @@ import 'package:hopehive/features/setting/setting_page.dart';
 
 class AppRoutes {
   static const String onboarding = '/onboarding';
-  static const String login = '/';
+  static const String login = '/login';
   static const String register = '/register';
   static const String forgotPassword = '/forgot_password';
   static const String home = '/home';
