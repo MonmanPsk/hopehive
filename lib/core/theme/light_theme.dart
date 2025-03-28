@@ -23,6 +23,7 @@ class LightTheme {
         bodySmall: TextStyle(fontSize: 9),
         labelLarge: TextStyle(fontSize: 18),
         labelMedium: TextStyle(fontSize: 16),
+        labelSmall: TextStyle(fontSize: 13),
       ).apply(
         bodyColor: const Color(0xFF2A2A2A),
         displayColor: const Color(0xFF2A2A2A),

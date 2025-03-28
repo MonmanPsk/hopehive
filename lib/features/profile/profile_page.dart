@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/profile/domain/profile_provider.dart';
+import 'package:hopehive/widgets/donation_card.dart';
+import 'package:hopehive/widgets/request_card.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -267,54 +269,7 @@ class ProfilePage extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _donationLength,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(10),
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 45,
-                                width: 155,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Title'),
-                                  Text('Location'),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const Row(
-                            children: [
-                              Text('Category: '),
-                              Text('Condition: '),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
+                    return const DonationCard();
                   },
                 ),
                 ListView.builder(
@@ -322,21 +277,7 @@ class ProfilePage extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _requestLength,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(10),
-                      height: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                    );
+                    return const RequestCard();
                   },
                 ),
               ],

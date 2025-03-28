@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/features/donate/donate_page.dart';
 import 'package:hopehive/features/onboarding/onboarding_page.dart';
 import 'package:hopehive/features/auth/auth_page.dart';
 import 'package:hopehive/features/auth/presentation/register_screen.dart';
 import 'package:hopehive/features/auth/presentation/forgot_password_screen.dart';
 import 'package:hopehive/features/home/home_page.dart';
 import 'package:hopehive/features/profile/presentation/edit_profile_screen.dart';
+import 'package:hopehive/features/request/request_page.dart';
 import 'package:hopehive/features/setting/setting_page.dart';
 
 class AppRoutes {
@@ -15,6 +17,8 @@ class AppRoutes {
   static const String home = '/home';
   static const String setting = '/setting';
   static const String editProfile = '/edit_profile';
+  static const String donation = '/donation';
+  static const String request = '/request';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -32,8 +36,12 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => SettingPage());
       case editProfile:
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+      case donation:
+        return MaterialPageRoute(builder: (_) => const DonationPage());
+      case request:
+        return MaterialPageRoute(builder: (_) => const RequestPage());
       default:
-        return MaterialPageRoute(builder: (_) => const Center());
+        return MaterialPageRoute(builder: (_) => AuthPage());
     }
   }
 }
