@@ -4,6 +4,7 @@ import 'package:hopehive/features/auth/auth_page.dart';
 import 'package:hopehive/features/auth/presentation/register_screen.dart';
 import 'package:hopehive/features/auth/presentation/forgot_password_screen.dart';
 import 'package:hopehive/features/home/home_page.dart';
+import 'package:hopehive/features/profile/presentation/edit_profile_screen.dart';
 import 'package:hopehive/features/setting/setting_page.dart';
 
 class AppRoutes {
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot_password';
   static const String home = '/home';
   static const String setting = '/setting';
+  static const String editProfile = '/edit_profile';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +30,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const HomePage());
       case setting:
         return MaterialPageRoute(builder: (_) => SettingPage());
+      case editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       default:
         return MaterialPageRoute(builder: (_) => const Center());
     }

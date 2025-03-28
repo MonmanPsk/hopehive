@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/profile/domain/profile_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -60,7 +61,10 @@ class ProfilePage extends ConsumerWidget {
                             height: 30,
                             width: 200,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () => Navigator.pushNamed(
+                                context,
+                                AppRoutes.editProfile,
+                              ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
