@@ -10,8 +10,8 @@ class HomeScreen extends ConsumerWidget {
   HomeScreen({super.key});
 
   final List<List<dynamic>> _quickAccess = [
-    ['Create\nDonation', Icons.grid_view_rounded, AppRoutes.home],
-    ['Create\nRequest', Icons.grid_view_rounded, AppRoutes.home],
+    ['Create\nDonation', Icons.grid_view_rounded, AppRoutes.createDonation],
+    ['Create\nRequest', Icons.grid_view_rounded, AppRoutes.createRequest],
     ['Pickup &\nDrop-off', Icons.grid_view_rounded, AppRoutes.home],
     ['Urgent Needs', Icons.grid_view_rounded, AppRoutes.home],
   ];
@@ -101,7 +101,10 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    _quickAccess[index][2],
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Theme.of(context).primaryColor,

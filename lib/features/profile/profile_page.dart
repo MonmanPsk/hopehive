@@ -15,9 +15,6 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabController = ref.watch(tabControllerProvider);
-    final length = tabController.index == 0
-        ? _donationLength * 110.0
-        : _requestLength * 90.0;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -236,49 +233,119 @@ class ProfilePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_rounded, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 10),
-                Text(
-                  'Create a new donation',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
           SizedBox(
-            height: length,
+            height: tabController.index == 0
+                ? (_donationLength * 110.0 + 80.0)
+                : (_requestLength * 90.0 + 80.0),
             child: TabBarView(
               clipBehavior: Clip.none,
               controller: tabController,
               children: [
-                ListView.builder(
-                  shrinkWrap: true,
+                // Donations tab
+                SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _donationLength,
-                  itemBuilder: (context, index) {
-                    return const DonationCard();
-                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pushNamed(
+                              context, AppRoutes.createDonation),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            shadowColor: Colors.transparent,
+                            elevation: 0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_rounded,
+                                  color: Theme.of(context).primaryColor),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Create a new donation',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _donationLength,
+                        itemBuilder: (context, index) {
+                          return const DonationCard();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
+                // Requests tab
+                SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _requestLength,
-                  itemBuilder: (context, index) {
-                    return const RequestCard();
-                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pushNamed(
+                              context, AppRoutes.createRequest),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            shadowColor: Colors.transparent,
+                            elevation: 0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_rounded,
+                                  color: Theme.of(context).primaryColor),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Create a new request',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _requestLength,
+                        itemBuilder: (context, index) {
+                          return const RequestCard();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
