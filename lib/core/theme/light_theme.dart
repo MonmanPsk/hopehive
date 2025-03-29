@@ -86,6 +86,18 @@ class LightTheme {
           ),
         ),
       ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor: Colors.white,
+        contentTextStyle: const TextStyle(
+          color: Color(0xFF00A8AA),
+          fontWeight: FontWeight.bold,
+        ),
+        actionTextColor: const Color(0xFF00A8AA),
+      ),
     );
   }
 }
