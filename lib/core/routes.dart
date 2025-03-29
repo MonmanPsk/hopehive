@@ -35,7 +35,7 @@ class AppRoutes {
       case setting:
         return MaterialPageRoute(builder: (_) => SettingPage());
       case editProfile:
-        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+        return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case donation:
         return MaterialPageRoute(builder: (_) => const DonationPage());
       case request:
