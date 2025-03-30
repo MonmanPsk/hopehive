@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/providers/user_provider.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/profile/domain/profile_provider.dart';
 import 'package:hopehive/widgets/donation_card.dart';
@@ -15,6 +16,9 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabController = ref.watch(tabControllerProvider);
+    final userAsyncValue =
+        ref.watch(userProvider(FirebaseAuth.instance.currentUser?.uid ?? ''));
+    final user = userAsyncValue.value;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -38,11 +42,16 @@ class ProfilePage extends ConsumerWidget {
                     CircleAvatar(
                       radius: 40,
                       backgroundColor: Theme.of(context).colorScheme.primary,
-                      child: const Icon(
-                        Icons.bubble_chart_rounded,
-                        size: 50,
-                        color: Colors.white,
-                      ),
+                      backgroundImage: user?.profileImage != null
+                          ? NetworkImage(user?.profileImage ?? '')
+                          : null,
+                      child: user?.profileImage == null
+                          ? const Icon(
+                              Icons.bubble_chart_rounded,
+                              size: 50,
+                              color: Colors.white,
+                            )
+                          : null,
                     ),
                     const SizedBox(width: 20),
                     Flexible(
@@ -50,8 +59,7 @@ class ProfilePage extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            FirebaseAuth.instance.currentUser?.displayName ??
-                                'User',
+                            '${user?.firstname} ${user?.lastname}',
                             style: Theme.of(context).textTheme.titleLarge,
                             overflow: TextOverflow.clip,
                           ),

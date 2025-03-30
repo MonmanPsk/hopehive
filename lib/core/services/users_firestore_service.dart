@@ -25,9 +25,9 @@ class UsersFirestoreService {
     return null;
   }
 
-  Future<void> updateUser(AppUser user) async {
+  Future<void> updateUser(String userId, Map<String, dynamic> updates) async {
     try {
-      await _users.doc(user.userId).update(user.toMap());
+      await _users.doc(userId).update(updates);
     } catch (e) {
       throw Exception('Failed to update user: $e');
     }

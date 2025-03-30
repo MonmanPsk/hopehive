@@ -39,7 +39,7 @@ class AppRoutes {
       case forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => HomePage());
       case setting:
         return MaterialPageRoute(builder: (_) => SettingPage());
       case editProfile:

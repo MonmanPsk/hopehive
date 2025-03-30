@@ -33,7 +33,7 @@ class MyApp extends ConsumerWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          return snapshot.hasData ? const HomePage() : AuthPage();
+          return snapshot.hasData ? HomePage() : AuthPage();
         },
       ),
       initialRoute: FirebaseAuth.instance.currentUser == null

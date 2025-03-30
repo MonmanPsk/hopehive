@@ -1,21 +1,23 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/providers/user_provider.dart';
+import 'package:hopehive/core/services/users_firestore_service.dart';
+import 'package:hopehive/features/profile/domain/edit_profile_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends ConsumerWidget {
   EditProfileScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController(
-      text: FirebaseAuth.instance.currentUser?.displayName?.split(' ')[0]);
-  final _lastNameController = TextEditingController(
-      text: FirebaseAuth.instance.currentUser?.displayName?.split(' ')[1]);
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController =
       TextEditingController(text: FirebaseAuth.instance.currentUser?.email);
-  final _phoneController = TextEditingController(
-      text: FirebaseAuth.instance.currentUser?.phoneNumber);
+  final _phoneController = TextEditingController();
   final ValueNotifier<String?> _imagePathNotifier =
       ValueNotifier<String?>(null);
 
@@ -45,8 +47,77 @@ class EditProfileScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _uploadProfilePicture(String userId) async {
+    if (_imagePathNotifier.value == null) return;
+
+    final storageRef = FirebaseStorage.instance.ref();
+    final userRef = storageRef.child('profile_pictures/$userId.jpg');
+
+    // Delete old profile picture if it exists
+    final user = await UsersFirestoreService().getUser(userId);
+    if (user?.profileImage != null) {
+      await FirebaseStorage.instance.refFromURL(user!.profileImage!).delete();
+    }
+
+    // Upload new profile picture
+    final uploadTask = await userRef.putFile(File(_imagePathNotifier.value!));
+    final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+    // Update Firestore with the new profile picture URL
+    await UsersFirestoreService().updateUser(userId, {
+      'profileImage': downloadUrl,
+    });
+    await FirebaseAuth.instance.currentUser?.updatePhotoURL(downloadUrl);
+  }
+
+  Future<void> _saveChanges(BuildContext context, WidgetRef ref) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+
+    ref.read(isLoadingProvider.notifier).state = true;
+
+    try {
+      await _uploadProfilePicture(userId);
+
+      // Update other user details in Firestore
+      await UsersFirestoreService().updateUser(
+        userId,
+        {
+          'firstname': _firstNameController.text,
+          'lastname': _lastNameController.text,
+          'phone': _phoneController.text,
+          'email': _emailController.text,
+        },
+      );
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+    } finally {
+      ref.read(isLoadingProvider.notifier).state = false;
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(isLoadingProvider);
+    final userAsyncValue =
+        ref.watch(userProvider(FirebaseAuth.instance.currentUser?.uid ?? ''));
+    final user = userAsyncValue.value;
+
+    if (user != null) {
+      _firstNameController.text = user.firstname;
+      _lastNameController.text = user.lastname;
+      _phoneController.text = user.phone ?? '';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -87,14 +158,19 @@ class EditProfileScreen extends StatelessWidget {
                     child: ValueListenableBuilder<String?>(
                       valueListenable: _imagePathNotifier,
                       builder: (context, imagePath, child) {
+                        final currentPhotoURL =
+                            FirebaseAuth.instance.currentUser?.photoURL;
+
                         return CircleAvatar(
                           radius: 50,
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
                           backgroundImage: imagePath != null
                               ? FileImage(File(imagePath))
-                              : null,
-                          child: imagePath == null
+                              : (currentPhotoURL != null
+                                  ? NetworkImage(currentPhotoURL)
+                                  : null),
+                          child: (imagePath == null && currentPhotoURL == null)
                               ? const Icon(
                                   Icons.bubble_chart_rounded,
                                   size: 60,
@@ -118,6 +194,7 @@ class EditProfileScreen extends StatelessWidget {
                           if (await _checkPermission()) {
                             _pickImage();
                           } else {
+                            if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Permission denied for photos'),
@@ -177,8 +254,18 @@ class EditProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Save Changes'),
+                  onPressed:
+                      isLoading ? null : () => _saveChanges(context, ref),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Save Changes'),
                 ),
               ),
             ],

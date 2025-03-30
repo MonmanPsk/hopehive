@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/providers/user_provider.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/home/domain/home_screen_provider.dart';
 import 'package:hopehive/widgets/donation_card.dart';
@@ -37,6 +38,9 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userAsyncValue =
+        ref.watch(userProvider(FirebaseAuth.instance.currentUser?.uid ?? ''));
+    final user = userAsyncValue.value;
     final tabController = ref.watch(tabControllerProvider);
     final length = tabController.index == 0
         ? _donationLength * 110.0
@@ -61,9 +65,7 @@ class HomeScreen extends ConsumerWidget {
                         .copyWith(fontWeight: FontWeight.normal),
                     children: [
                       TextSpan(
-                        text: FirebaseAuth.instance.currentUser?.displayName
-                                ?.split(' ')[0] ??
-                            'User',
+                        text: user?.firstname ?? 'User',
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!
@@ -72,18 +74,19 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: const Icon(
-                    Icons.bubble_chart,
-                    size: 35,
-                    color: Colors.white,
-                  ),
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundImage: user?.profileImage != null
+                      ? NetworkImage(user?.profileImage ?? '')
+                      : null,
+                  child: user?.profileImage == null
+                      ? const Icon(
+                          Icons.bubble_chart_rounded,
+                          size: 35,
+                          color: Colors.white,
+                        )
+                      : null,
                 ),
               ],
             ),
