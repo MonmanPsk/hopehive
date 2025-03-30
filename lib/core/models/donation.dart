@@ -28,4 +28,44 @@ class Donation {
     required this.option,
     required this.contact,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'creator': creator.path,
+      'requester': requesters.map((r) => r.path).toList(),
+      'title': title,
+      'description': description,
+      'images': images,
+      'category': category,
+      'condition': condition,
+      'quantity': quantity,
+      'location': {
+        'latitude': location.latitude,
+        'longitude': location.longitude
+      },
+      'option': option,
+      'contact': contact,
+    };
+  }
+
+  factory Donation.fromMap(Map<String, dynamic> map, String id) {
+    return Donation(
+      donationId: id,
+      creator: FirebaseFirestore.instance.doc(map['creator']),
+      requesters: (map['requester'] as List<dynamic>?)
+              ?.map((r) => FirebaseFirestore.instance.doc(r))
+              .toList() ??
+          [],
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      images: List<String>.from(map['images'] ?? []),
+      category: map['category'] ?? '',
+      condition: map['condition'] ?? '',
+      quantity: map['quantity'] ?? 0,
+      location:
+          GeoPoint(map['location']['latitude'], map['location']['longitude']),
+      option: map['option'] ?? '',
+      contact: Map<String, String>.from(map['contact'] ?? {}),
+    );
+  }
 }
