@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/features/notification/presentation/notification_tab.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -42,24 +43,7 @@ class NotificationPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 3,
               itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 25,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: const Icon(
-                      Icons.notifications_active_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    'Thank you for your donation! Your contribution is confirmed.',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  subtitle: Text(
-                    '2h ago',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                );
+                return NotificationTab();
               },
             ),
           ],
