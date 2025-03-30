@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hopehive/core/models/request.dart';
 import 'package:hopehive/widgets/request_card.dart';
 
 class UrgencyNeedsScreen extends StatelessWidget {
@@ -26,7 +28,23 @@ class UrgencyNeedsScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 10,
               itemBuilder: (context, index) {
-                return RequestCard();
+                final request = Request(
+                  requestId: 'CmdAaAKXrkVTPtw849IU',
+                  creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
+                  title: 'Title',
+                  reason: 'Reason',
+                  category: 'Educational & Office',
+                  condition: 'Gently Used',
+                  quantity: 2,
+                  urgency: 'Urgent',
+                  location: const GeoPoint(13.164856, 13.164856),
+                  option: 'Pickup',
+                  contact: [
+                    {'Chat': null}
+                  ],
+                  createdAt: Timestamp.now(),
+                );
+                return RequestCard(request: request);
               },
             ),
           ],

@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/core/models/request.dart';
 import 'package:hopehive/core/routes.dart';
 
 class RequestCard extends StatelessWidget {
-  const RequestCard({super.key});
+  const RequestCard({super.key, required this.request});
+
+  final Request request;
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, Color> urgencyColor = {
+      'Flexible': Theme.of(context).primaryColor,
+      'Soon': Colors.amber,
+      'Urgent': const Color(0xFFF94449),
+    };
+
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, AppRoutes.request),
       child: Container(
@@ -28,25 +37,35 @@ class RequestCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Title',
-                  style: Theme.of(context).textTheme.titleMedium,
+                Expanded(
+                  child: Text(
+                    request.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_rounded,
-                      size: 15,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Location',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                    ),
-                  ],
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.location_on_rounded,
+                        size: 15,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          '${request.location.latitude}, ${request.location.longitude}',
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -54,27 +73,36 @@ class RequestCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'Category: ',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        'Category: ',
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      child: Text(
-                        'Any',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                          ),
+                          child: Text(
+                            request.category,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Container(
@@ -82,12 +110,12 @@ class RequestCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    color: urgencyColor[request.urgency]?.withOpacity(0.1),
                   ),
                   child: Text(
-                    'Flexible',
+                    request.urgency,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).primaryColor,
+                          color: urgencyColor[request.urgency],
                         ),
                   ),
                 ),

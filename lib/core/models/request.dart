@@ -19,10 +19,10 @@ class Request {
   Request({
     required this.requestId,
     required this.creator,
-    required this.donors,
+    this.donors = const [],
     required this.title,
     required this.reason,
-    required this.images,
+    this.images = const [],
     required this.category,
     required this.condition,
     required this.quantity,

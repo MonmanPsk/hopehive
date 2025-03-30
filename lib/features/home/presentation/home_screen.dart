@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hopehive/core/models/donation.dart';
+import 'package:hopehive/core/models/request.dart';
 import 'package:hopehive/core/providers/user_provider.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/home/domain/home_screen_provider.dart';
@@ -202,7 +203,7 @@ class HomeScreen extends ConsumerWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _donationLength,
                     itemBuilder: (context, index) {
-                      Donation donation = Donation(
+                      final donation = Donation(
                         donationId: 'jcUlfmAc3QWjYE2BWCiX',
                         creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
                         banner:
@@ -232,7 +233,23 @@ class HomeScreen extends ConsumerWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _requestLength,
                     itemBuilder: (context, index) {
-                      return const RequestCard();
+                      final request = Request(
+                        requestId: 'CmdAaAKXrkVTPtw849IU',
+                        creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
+                        title: 'Title',
+                        reason: 'Reason',
+                        category: 'Educational & Office',
+                        condition: 'Gently Used',
+                        quantity: 2,
+                        urgency: 'Flexible',
+                        location: const GeoPoint(13.164856, 13.164856),
+                        option: 'Pickup',
+                        contact: [
+                          {'Chat': null}
+                        ],
+                        createdAt: Timestamp.now(),
+                      );
+                      return RequestCard(request: request);
                     },
                   ),
                 ],
