@@ -270,11 +270,28 @@ class DonationPage extends StatelessWidget {
                         ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.send_rounded),
+                SizedBox(width: 10),
+                Text('Send Request'),
+              ],
+            ),
+          ),
         ),
       ),
     );

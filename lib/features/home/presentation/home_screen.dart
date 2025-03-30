@@ -16,22 +16,22 @@ class HomeScreen extends ConsumerWidget {
   final List<List<dynamic>> _quickAccess = [
     [
       ['Create', 'Donation'],
-      Icons.grid_view_rounded,
+      Icons.inventory_2_rounded,
       AppRoutes.createDonation
     ],
     [
       ['Create', 'Request'],
-      Icons.grid_view_rounded,
+      Icons.inbox_rounded,
       AppRoutes.createRequest
     ],
     [
       ['', 'Pickup &\nDrop-off'],
-      Icons.grid_view_rounded,
+      Icons.local_shipping_rounded,
       AppRoutes.pickupDropoff
     ],
     [
       ['', 'Urgent Needs'],
-      Icons.grid_view_rounded,
+      Icons.fmd_bad_rounded,
       AppRoutes.urgencyNeeds
     ],
   ];

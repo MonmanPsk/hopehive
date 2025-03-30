@@ -59,7 +59,7 @@ class HomePage extends ConsumerWidget {
             BottomNavigationBarItem(
                 icon: Icon(Icons.home_rounded), label: 'Home'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.chat_rounded), label: 'Chat'),
+                icon: Icon(Icons.question_answer_rounded), label: 'Chat'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.notifications_rounded), label: 'Notification'),
             BottomNavigationBarItem(

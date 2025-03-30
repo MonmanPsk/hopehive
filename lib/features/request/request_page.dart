@@ -280,11 +280,28 @@ class RequestPage extends StatelessWidget {
                         ),
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        child: SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.volunteer_activism_rounded),
+                SizedBox(width: 10),
+                Text('Donate'),
+              ],
+            ),
+          ),
         ),
       ),
     );
