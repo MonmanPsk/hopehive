@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Donation {
   final String donationId;
-  final DocumentReference creator;
+  final String creator;
   final List<DocumentReference> requesters;
+  final String banner;
   final String title;
   final String description;
   final List<String> images;
@@ -12,13 +13,14 @@ class Donation {
   final int quantity;
   final GeoPoint location;
   final String option;
-  final Map<String, String> contact;
+  final List<Map<String, String?>> contact;
   final Timestamp createdAt;
 
   Donation({
     required this.donationId,
     required this.creator,
     required this.requesters,
+    required this.banner,
     required this.title,
     required this.description,
     required this.images,
@@ -33,8 +35,9 @@ class Donation {
 
   Map<String, dynamic> toMap() {
     return {
-      'creator': creator.path,
+      'creator': creator,
       'requester': requesters.map((r) => r.path).toList(),
+      'banner': banner,
       'title': title,
       'description': description,
       'images': images,
@@ -54,11 +57,12 @@ class Donation {
   factory Donation.fromMap(Map<String, dynamic> map, String id) {
     return Donation(
       donationId: id,
-      creator: FirebaseFirestore.instance.doc(map['creator']),
+      creator: map['creator'] ?? '',
       requesters: (map['requester'] as List<dynamic>?)
               ?.map((r) => FirebaseFirestore.instance.doc(r))
               .toList() ??
           [],
+      banner: map['banner'] ?? '',
       title: map['title'] ?? '',
       description: map['description'] ?? '',
       images: List<String>.from(map['images'] ?? []),
@@ -68,7 +72,7 @@ class Donation {
       location:
           GeoPoint(map['location']['latitude'], map['location']['longitude']),
       option: map['option'] ?? '',
-      contact: Map<String, String>.from(map['contact'] ?? {}),
+      contact: List<Map<String, String?>>.from(map['contact'] ?? []),
       createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }

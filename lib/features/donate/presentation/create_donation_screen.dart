@@ -1,6 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/models/donation.dart';
+import 'package:hopehive/core/services/donations_firestore_service.dart';
 import 'package:hopehive/features/donate/domain/create_donation_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -189,6 +194,7 @@ class CreateDonationScreen extends ConsumerWidget {
     final quantity = ref.watch(quantityProvider);
     final selectedPickupOption = ref.watch(pickupOptionProvider);
     final contactInfo = ref.watch(contactInfoProvider);
+    final location = ref.watch(locationProvider);
     final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
@@ -784,6 +790,19 @@ class CreateDonationScreen extends ConsumerWidget {
     );
   }
 
+  Future<String> uploadImage(String filePath) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference ref =
+          FirebaseStorage.instance.ref().child("donation_images/$fileName");
+      UploadTask uploadTask = ref.putFile(File(filePath));
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception("Failed to upload image: $e");
+    }
+  }
+
   Widget _buildBottomSheet(
       BuildContext context,
       WidgetRef ref,
@@ -792,6 +811,8 @@ class CreateDonationScreen extends ConsumerWidget {
       String? selectedCategory,
       String? selectedItemCondition,
       List<Map<String, String?>> contactInfo) {
+    final isLoading = ref.watch(isLoadingProvider);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       decoration: BoxDecoration(
@@ -808,55 +829,130 @@ class CreateDonationScreen extends ConsumerWidget {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            bool isValid = true;
+          onPressed: isLoading
+              ? null
+              : () async {
+                  bool isValid = true;
 
-            // Validate banner image
-            if (_imagePathNotifier.value == null) {
-              _bannerErrorNotifier.value = 'Please upload a banner image.';
-              isValid = false;
-            } else {
-              _bannerErrorNotifier.value = null;
-            }
+                  // Validate banner image
+                  if (_imagePathNotifier.value == null) {
+                    _bannerErrorNotifier.value =
+                        'Please upload a banner image.';
+                    isValid = false;
+                  } else {
+                    _bannerErrorNotifier.value = null;
+                  }
 
-            // Validate images
-            if (images.isEmpty) {
-              _imageErrorNotifier.value = 'Please upload at least one image.';
-              isValid = false;
-            } else {
-              _imageErrorNotifier.value = null;
-            }
+                  // Validate images
+                  if (images.isEmpty) {
+                    _imageErrorNotifier.value =
+                        'Please upload at least one image.';
+                    isValid = false;
+                  } else {
+                    _imageErrorNotifier.value = null;
+                  }
 
-            // Validate selectors
-            if (selectedCategory == null || selectedItemCondition == null) {
-              _selectorErrorNotifier.value =
-                  'Please select both category and item condition.';
-              isValid = false;
-            } else {
-              _selectorErrorNotifier.value = null;
-            }
+                  // Validate selectors
+                  if (selectedCategory == null ||
+                      selectedItemCondition == null) {
+                    _selectorErrorNotifier.value =
+                        'Please select both category and item condition.';
+                    isValid = false;
+                  } else {
+                    _selectorErrorNotifier.value = null;
+                  }
 
-            // Validate contact info
-            if (contactInfo.isEmpty) {
-              _contactErrorNotifier.value =
-                  'Please add at least one contact method.';
-              isValid = false;
-            } else {
-              _contactErrorNotifier.value = null;
-            }
+                  // Validate contact info
+                  if (contactInfo.isEmpty) {
+                    _contactErrorNotifier.value =
+                        'Please add at least one contact method.';
+                    isValid = false;
+                  } else {
+                    _contactErrorNotifier.value = null;
+                  }
 
-            // Validate form fields
-            if (_formKey.currentState!.validate() && isValid) {
-              Navigator.pop(context);
-            }
-          },
+                  // Validate form fields
+                  if (_formKey.currentState!.validate() && isValid) {
+                    ref.read(isLoadingProvider.notifier).state = true;
+
+                    try {
+                      // Upload images to Firebase Storage
+                      List<String> uploadedImageUrls = await Future.wait(images
+                          .map((imagePath) => uploadImage(imagePath.path)));
+                      String bannerUrl =
+                          await uploadImage(_imagePathNotifier.value!);
+
+                      DocumentReference donationRef = FirebaseFirestore.instance
+                          .collection('donations')
+                          .doc();
+
+                      // Retrieve form values
+                      final title = ref.read(titleProvider);
+                      final description = ref.read(descriptionProvider);
+                      final category = selectedCategory;
+                      final condition = selectedItemCondition;
+                      final location = ref.read(locationProvider);
+                      final option = ref.watch(pickupOptionProvider);
+                      final quantity = ref.watch(quantityProvider);
+                      final contactInfo = ref.watch(contactInfoProvider);
+
+                      // Create donation document
+                      Donation donation = Donation(
+                        donationId: donationRef.id,
+                        creator: FirebaseAuth.instance.currentUser!.uid,
+                        banner: bannerUrl,
+                        requesters: [],
+                        title: title,
+                        description: description,
+                        images: uploadedImageUrls,
+                        category: category!,
+                        condition: condition!,
+                        quantity: quantity,
+                        location: location!,
+                        option: option,
+                        contact: contactInfo,
+                        createdAt: Timestamp.now(),
+                      );
+                      await DonationsFirestoreService().addDonation(donation);
+
+                      // Add donation ID to user's donation list
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser?.uid)
+                          .update({
+                        'donation': FieldValue.arrayUnion([donationRef.id]),
+                      });
+
+                      // Close the form
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text("Failed to create donation: $e")),
+                      );
+                    } finally {
+                      ref.read(isLoadingProvider.notifier).state = false;
+                    }
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('Create'),
+          child: isLoading
+              ? const SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : const Text('Create'),
         ),
       ),
     );
