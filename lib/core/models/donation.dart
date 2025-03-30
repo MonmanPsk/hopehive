@@ -13,7 +13,7 @@ class Donation {
   final int quantity;
   final GeoPoint location;
   final String option;
-  final List<Map<String, String?>> contact;
+  final List<Map<String, dynamic>> contact;
   final Timestamp createdAt;
 
   Donation({
@@ -72,7 +72,7 @@ class Donation {
       location:
           GeoPoint(map['location']['latitude'], map['location']['longitude']),
       option: map['option'] ?? '',
-      contact: List<Map<String, String?>>.from(map['contact'] ?? []),
+      contact: List<Map<String, dynamic>>.from(map['contact'] ?? []),
       createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }

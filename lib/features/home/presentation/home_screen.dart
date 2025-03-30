@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hopehive/core/models/donation.dart';
-import 'package:hopehive/core/models/request.dart';
+import 'package:hopehive/core/providers/donation_request_provider.dart';
 import 'package:hopehive/core/providers/user_provider.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/home/domain/home_screen_provider.dart';
@@ -36,18 +34,31 @@ class HomeScreen extends ConsumerWidget {
     ],
   ];
 
-  final int _donationLength = 8;
-  final int _requestLength = 6;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsyncValue =
         ref.watch(userProvider(FirebaseAuth.instance.currentUser?.uid ?? ''));
     final user = userAsyncValue.value;
     final tabController = ref.watch(tabControllerProvider);
-    final length = tabController.index == 0
-        ? _donationLength * 110.0
-        : _requestLength * 90.0;
+
+    // Watch donation and request streams
+    final donationsAsyncValue = ref.watch(donationsStreamProvider);
+    final requestsAsyncValue = ref.watch(requestsStreamProvider);
+
+    // Get dynamic heights based on available data
+    final donationsLength = donationsAsyncValue.when(
+      data: (donations) => donations.length * 110.0,
+      loading: () => 8 * 110.0, // Default height while loading
+      error: (_, __) => 110.0, // Minimal height on error
+    );
+
+    final requestsLength = requestsAsyncValue.when(
+      data: (requests) => requests.length * 90.0,
+      loading: () => 6 * 90.0, // Default height while loading
+      error: (_, __) => 90.0, // Minimal height on error
+    );
+
+    final length = tabController.index == 0 ? donationsLength : requestsLength;
 
     return userAsyncValue.when(
       data: (data) => SingleChildScrollView(
@@ -198,58 +209,79 @@ class HomeScreen extends ConsumerWidget {
                 clipBehavior: Clip.none,
                 controller: tabController,
                 children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _donationLength,
-                    itemBuilder: (context, index) {
-                      final donation = Donation(
-                        donationId: 'jcUlfmAc3QWjYE2BWCiX',
-                        creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
-                        banner:
-                            'https://firebasestorage.googleapis.com/v0/b/hopehive-8e99e.firebasestorage.app/o/donation_images%2F1743359244958?alt=media&token=87514505-7404-45ca-94e4-e4f3767255d5',
-                        title: 'Title',
-                        description: 'Description',
-                        images: [
-                          'https://firebasestorage.googleapis.com/v0/b/hopehive-8e99e.firebasestorage.app/o/donation_images%2F1743359244195?alt=media&token=64f9aa00-a0b9-4913-8387-c1e7e60c72b0',
-                        ],
-                        category: 'Essential Needs',
-                        condition: 'New',
-                        quantity: 3,
-                        location: const GeoPoint(13.164856, 13.164856),
-                        option: 'Any',
-                        contact: [
-                          {'Chat': null}
-                        ],
-                        createdAt: Timestamp.now(),
+                  // Donations tab
+                  donationsAsyncValue.when(
+                    data: (donations) {
+                      if (donations.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No donations available',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: donations.length,
+                        itemBuilder: (context, index) {
+                          return DonationCard(
+                            donation: donations[index],
+                          );
+                        },
                       );
-                      return DonationCard(
-                        donation: donation,
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    error: (error, stack) {
+                      return Center(
+                        child: Text(
+                          'Error loading donations: ${error.toString()}',
+                          style:
+                              Theme.of(context).textTheme.titleSmall!.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                        ),
                       );
                     },
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _requestLength,
-                    itemBuilder: (context, index) {
-                      final request = Request(
-                        requestId: 'CmdAaAKXrkVTPtw849IU',
-                        creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
-                        title: 'Title',
-                        reason: 'Reason',
-                        category: 'Educational & Office',
-                        condition: 'Gently Used',
-                        quantity: 2,
-                        urgency: 'Flexible',
-                        location: const GeoPoint(13.164856, 13.164856),
-                        option: 'Pickup',
-                        contact: [
-                          {'Chat': null}
-                        ],
-                        createdAt: Timestamp.now(),
+
+                  // Requests tab
+                  requestsAsyncValue.when(
+                    data: (requests) {
+                      if (requests.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'No requests available',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: requests.length,
+                        itemBuilder: (context, index) {
+                          return RequestCard(
+                            request: requests[index],
+                          );
+                        },
                       );
-                      return RequestCard(request: request);
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    error: (error, stack) {
+                      return Center(
+                        child: Text(
+                          'Error loading requests: ${error.toString()}',
+                          style:
+                              Theme.of(context).textTheme.titleSmall!.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                        ),
+                      );
                     },
                   ),
                 ],
