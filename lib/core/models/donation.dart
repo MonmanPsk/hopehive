@@ -19,7 +19,7 @@ class Donation {
   Donation({
     required this.donationId,
     required this.creator,
-    required this.requesters,
+    this.requesters = const [],
     required this.banner,
     required this.title,
     required this.description,

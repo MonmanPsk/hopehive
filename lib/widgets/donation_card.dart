@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/core/models/donation.dart';
 import 'package:hopehive/core/routes.dart';
 
 class DonationCard extends StatelessWidget {
-  const DonationCard({super.key});
+  const DonationCard({super.key, required this.donation});
+
+  final Donation donation;
 
   @override
   Widget build(BuildContext context) {
@@ -33,34 +36,53 @@ class DonationCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     color: Theme.of(context).primaryColor,
                   ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      donation.banner,
+                      fit: BoxFit.cover,
+                      width: 155,
+                      height: 45,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Title',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_rounded,
-                          size: 15,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Location',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        donation.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_rounded,
+                            size: 15,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              '${donation.location.latitude}, ${donation.location.longitude}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
                                     color: Theme.of(context).primaryColor,
                                   ),
-                        ),
-                      ],
-                    ),
-                  ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -68,49 +90,67 @@ class DonationCard extends StatelessWidget {
             Row(
               children: [
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'Category: ',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
-                      ),
-                      child: Text(
-                        'Any',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.1),
+                        ),
+                        child: Text(
+                          donation.category,
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(width: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Condition: ',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Condition: ',
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      child: Text(
-                        'Any',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                          ),
+                          child: Text(
+                            donation.condition,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

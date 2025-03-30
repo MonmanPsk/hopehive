@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/models/donation.dart';
 import 'package:hopehive/core/providers/user_provider.dart';
 import 'package:hopehive/core/routes.dart';
 import 'package:hopehive/features/home/domain/home_screen_provider.dart';
@@ -200,7 +202,29 @@ class HomeScreen extends ConsumerWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _donationLength,
                     itemBuilder: (context, index) {
-                      return const DonationCard();
+                      Donation donation = Donation(
+                        donationId: 'jcUlfmAc3QWjYE2BWCiX',
+                        creator: 'OtAxiQwvQPSQKYYQROS9426DBGS2',
+                        banner:
+                            'https://firebasestorage.googleapis.com/v0/b/hopehive-8e99e.firebasestorage.app/o/donation_images%2F1743359244958?alt=media&token=87514505-7404-45ca-94e4-e4f3767255d5',
+                        title: 'Title',
+                        description: 'Description',
+                        images: [
+                          'https://firebasestorage.googleapis.com/v0/b/hopehive-8e99e.firebasestorage.app/o/donation_images%2F1743359244195?alt=media&token=64f9aa00-a0b9-4913-8387-c1e7e60c72b0',
+                        ],
+                        category: 'Essential Needs',
+                        condition: 'New',
+                        quantity: 3,
+                        location: const GeoPoint(13.164856, 13.164856),
+                        option: 'Any',
+                        contact: [
+                          {'Chat': null}
+                        ],
+                        createdAt: Timestamp.now(),
+                      );
+                      return DonationCard(
+                        donation: donation,
+                      );
                     },
                   ),
                   ListView.builder(
