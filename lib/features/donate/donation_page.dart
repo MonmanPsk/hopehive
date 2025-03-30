@@ -48,7 +48,9 @@ class DonationPage extends StatelessWidget {
                   // Heading
                   Text(
                     donation.title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -67,12 +69,17 @@ class DonationPage extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 10),
+
                   Row(
                     children: [
                       Text(
                         'Category: ',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(width: 5),
                       Container(
@@ -99,12 +106,17 @@ class DonationPage extends StatelessWidget {
                       )
                     ],
                   ),
+
                   const SizedBox(height: 10),
+
                   Row(
                     children: [
                       Text(
                         'Item Condition: ',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(width: 5),
                       Container(
@@ -139,7 +151,9 @@ class DonationPage extends StatelessWidget {
                     donation.description,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
+
                   const SizedBox(height: 20),
+
                   SizedBox(
                     height: 150,
                     child: ListView.builder(
@@ -163,12 +177,17 @@ class DonationPage extends StatelessWidget {
                       },
                     ),
                   ),
+
                   const SizedBox(height: 20),
+
                   Row(
                     children: [
                       Text(
                         'Pickup/Drop-off Option: ',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(width: 5),
                       Container(
@@ -195,7 +214,9 @@ class DonationPage extends StatelessWidget {
                       )
                     ],
                   ),
+
                   const SizedBox(height: 20),
+
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -213,7 +234,12 @@ class DonationPage extends StatelessWidget {
                         children: [
                           Text(
                             'Location: ',
-                            style: Theme.of(context).textTheme.titleMedium,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           const SizedBox(height: 5),
                           Text(
@@ -234,11 +260,16 @@ class DonationPage extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 20),
+
                   Text(
                     'Contact',
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
+
                   const SizedBox(height: 30),
                 ],
               ),
