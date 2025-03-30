@@ -14,6 +14,7 @@ class Request {
   final GeoPoint location;
   final String option;
   final Map<String, String> contact;
+  final Timestamp createdAt;
 
   Request({
     required this.requestId,
@@ -29,6 +30,7 @@ class Request {
     required this.location,
     required this.option,
     required this.contact,
+    required this.createdAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -48,6 +50,7 @@ class Request {
       },
       'option': option,
       'contact': contact,
+      'createdAt': createdAt,
     };
   }
 
@@ -70,6 +73,7 @@ class Request {
           GeoPoint(map['location']['latitude'], map['location']['longitude']),
       option: map['option'] ?? '',
       contact: Map<String, String>.from(map['contact'] ?? {}),
+      createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }
 }

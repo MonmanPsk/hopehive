@@ -20,6 +20,12 @@ class ChatsFirestoreService {
     }
   }
 
+  Stream<List<Map<String, dynamic>>> getChatsStream() {
+    return _firestore.collection('chats').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    });
+  }
+
   Future<void> updateChat(String chatId, Map<String, dynamic> chatData) async {
     try {
       await _firestore.collection('chats').doc(chatId).update(chatData);

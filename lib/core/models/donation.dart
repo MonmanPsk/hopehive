@@ -13,6 +13,7 @@ class Donation {
   final GeoPoint location;
   final String option;
   final Map<String, String> contact;
+  final Timestamp createdAt;
 
   Donation({
     required this.donationId,
@@ -27,6 +28,7 @@ class Donation {
     required this.location,
     required this.option,
     required this.contact,
+    required this.createdAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -45,6 +47,7 @@ class Donation {
       },
       'option': option,
       'contact': contact,
+      'createdAt': createdAt,
     };
   }
 
@@ -66,6 +69,7 @@ class Donation {
           GeoPoint(map['location']['latitude'], map['location']['longitude']),
       option: map['option'] ?? '',
       contact: Map<String, String>.from(map['contact'] ?? {}),
+      createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }
 }
