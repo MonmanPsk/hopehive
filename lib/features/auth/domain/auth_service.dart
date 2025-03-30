@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:hopehive/core/models/app_user.dart';
+import 'package:hopehive/core/services/users_firestore_service.dart';
 import 'package:hopehive/features/auth/domain/login_provider.dart';
 import 'package:hopehive/features/auth/domain/register_provider.dart';
 
@@ -76,17 +78,34 @@ class AuthService {
     ref.read(registerErrorMessageProvider.notifier).state = null;
 
     try {
-      await FirebaseAuth.instance
+      // Create user in Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      await FirebaseAuth.instance.currentUser
-          ?.updateDisplayName('$firstname $lastname');
+
+      // Update the user's display name
+      await userCredential.user?.updateDisplayName('$firstname $lastname');
+
+      // Create a Firestore document for the user
+      final userId = userCredential.user?.uid;
+      if (userId != null) {
+        final appUser = AppUser(
+          userId: userId,
+          firstname: firstname,
+          lastname: lastname,
+        );
+
+        final usersFirestoreService = UsersFirestoreService();
+        await usersFirestoreService.addUser(appUser);
+      }
+
+      // Sign out the user after registration
       await FirebaseAuth.instance.signOut();
-      
+
       return true;
     } on FirebaseAuthException catch (e) {
       ref.read(registerErrorMessageProvider.notifier).state =
           _handleError(e.code);
-          
+
       return false;
     } finally {
       ref.read(registerIsLoadingProvider.notifier).state = false;

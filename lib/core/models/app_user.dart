@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser {
   final String userId;
-  final String profileImage;
+  final String? profileImage;
   final String firstname;
   final String lastname;
-  final String phone;
+  final String? phone;
   final List<DocumentReference> donations;
   final List<DocumentReference> requests;
   final Map<String, List<DocumentReference>> saved;
@@ -14,15 +14,15 @@ class AppUser {
 
   AppUser({
     required this.userId,
-    required this.profileImage,
+    this.profileImage,
     required this.firstname,
     required this.lastname,
-    required this.phone,
-    required this.donations,
-    required this.requests,
-    required this.saved,
-    required this.verification,
-    required this.locations,
+    this.phone,
+    this.donations = const [],
+    this.requests = const [],
+    this.saved = const {'donation': [], 'request': []},
+    this.verification = const [],
+    this.locations = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -47,10 +47,10 @@ class AppUser {
   factory AppUser.fromMap(Map<String, dynamic> map) {
     return AppUser(
       userId: '',
-      profileImage: map['profileImage'] ?? '',
+      profileImage: map['profileImage'],
       firstname: map['firstname'] ?? '',
       lastname: map['lastname'] ?? '',
-      phone: map['phone'] ?? '',
+      phone: map['phone'],
       donations: (map['donation'] as List<dynamic>?)
               ?.map((d) => FirebaseFirestore.instance.doc(d))
               .toList() ??
