@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Request {
   final String requestId;
-  final DocumentReference creator;
+  final String creator;
   final List<DocumentReference> donors;
   final String title;
   final String reason;
@@ -13,7 +13,7 @@ class Request {
   final String urgency;
   final GeoPoint location;
   final String option;
-  final Map<String, String> contact;
+  final List<Map<String, String?>> contact;
   final Timestamp createdAt;
 
   Request({
@@ -35,7 +35,7 @@ class Request {
 
   Map<String, dynamic> toMap() {
     return {
-      'creator': creator.path,
+      'creator': creator,
       'donor': donors.map((d) => d.path).toList(),
       'title': title,
       'reason': reason,
@@ -57,7 +57,7 @@ class Request {
   factory Request.fromMap(Map<String, dynamic> map, String id) {
     return Request(
       requestId: id,
-      creator: FirebaseFirestore.instance.doc(map['creator']),
+      creator: map['creator'] ?? '',
       donors: (map['donor'] as List<dynamic>?)
               ?.map((d) => FirebaseFirestore.instance.doc(d))
               .toList() ??
@@ -72,7 +72,7 @@ class Request {
       location:
           GeoPoint(map['location']['latitude'], map['location']['longitude']),
       option: map['option'] ?? '',
-      contact: Map<String, String>.from(map['contact'] ?? {}),
+      contact: List<Map<String, String>>.from(map['contact'] ?? []),
       createdAt: map['createdAt'] ?? Timestamp.now(),
     );
   }

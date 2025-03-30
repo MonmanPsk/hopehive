@@ -1,6 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hopehive/core/models/request.dart';
+import 'package:hopehive/core/services/requests_firestore_service.dart';
 import 'package:hopehive/features/request/domain/create_request_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,6 +14,9 @@ class CreateRequestScreen extends ConsumerWidget {
   CreateRequestScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _reasonController = TextEditingController();
+
   final _selectorErrorNotifier = ValueNotifier<String?>(null);
   final _contactErrorNotifier = ValueNotifier<String?>(null);
   final options = [
@@ -202,9 +210,10 @@ class CreateRequestScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title and Description Fields
-                    ..._buildTextField(context, 'Title', 'Title your donation'),
-                    ..._buildTextField(
-                        context, 'Description', 'Describe your donation',
+                    ..._buildTextField(context, 'Title', 'Title your donation',
+                        _titleController),
+                    ..._buildTextField(context, 'Description',
+                        'Describe your donation', _reasonController,
                         maxLines: 5),
 
                     // Images Section
@@ -378,11 +387,13 @@ class CreateRequestScreen extends ConsumerWidget {
 
   // Helper methods for UI components
   List<Widget> _buildTextField(BuildContext context, String label, String hint,
+      TextEditingController controller,
       {int maxLines = 1}) {
     return [
       Text(label, style: Theme.of(context).textTheme.labelLarge),
       const SizedBox(height: 8),
       TextFormField(
+        controller: controller,
         maxLines: maxLines,
         decoration: InputDecoration(hintText: hint),
         validator: (value) {
@@ -757,6 +768,19 @@ class CreateRequestScreen extends ConsumerWidget {
     );
   }
 
+  Future<String> uploadImage(String filePath) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference ref =
+          FirebaseStorage.instance.ref().child("request_images/$fileName");
+      UploadTask uploadTask = ref.putFile(File(filePath));
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception("Failed to upload image: $e");
+    }
+  }
+
   Widget _buildBottomSheet(
       BuildContext context,
       WidgetRef ref,
@@ -765,6 +789,8 @@ class CreateRequestScreen extends ConsumerWidget {
       String? selectedCategory,
       String? selectedconditionPreference,
       List<Map<String, String?>> contactInfo) {
+    final isLoading = ref.watch(isLoadingProvider);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       decoration: BoxDecoration(
@@ -781,40 +807,111 @@ class CreateRequestScreen extends ConsumerWidget {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            bool isValid = true;
+          onPressed: isLoading
+              ? null
+              : () async {
+                  bool isValid = true;
 
-            // Validate selectors
-            if (selectedCategory == null ||
-                selectedconditionPreference == null) {
-              _selectorErrorNotifier.value =
-                  'Please select both category and item condition.';
-              isValid = false;
-            } else {
-              _selectorErrorNotifier.value = null;
-            }
+                  // Validate selectors
+                  if (selectedCategory == null ||
+                      selectedconditionPreference == null) {
+                    _selectorErrorNotifier.value =
+                        'Please select both category and item condition.';
+                    isValid = false;
+                  } else {
+                    _selectorErrorNotifier.value = null;
+                  }
 
-            // Validate contact info
-            if (contactInfo.isEmpty) {
-              _contactErrorNotifier.value =
-                  'Please add at least one contact method.';
-              isValid = false;
-            } else {
-              _contactErrorNotifier.value = null;
-            }
+                  // Validate contact info
+                  if (contactInfo.isEmpty) {
+                    _contactErrorNotifier.value =
+                        'Please add at least one contact method.';
+                    isValid = false;
+                  } else {
+                    _contactErrorNotifier.value = null;
+                  }
 
-            // Validate form fields
-            if (_formKey.currentState!.validate() && isValid) {
-              Navigator.pop(context);
-            }
-          },
+                  // Validate form fields
+                  if (_formKey.currentState!.validate() && isValid) {
+                    ref.read(isLoadingProvider.notifier).state = true;
+
+                    try {
+                      // Upload images to Firebase Storage
+                      List<String> uploadedImageUrls = await Future.wait(images
+                          .map((imagePath) => uploadImage(imagePath.path)));
+
+                      DocumentReference requestRef = FirebaseFirestore.instance
+                          .collection('requests')
+                          .doc();
+
+                      // Retrieve form values
+                      final title = _titleController.text.trim();
+                      final reason = _reasonController.text.trim();
+                      final category = selectedCategory;
+                      final condition = selectedconditionPreference;
+                      final location = ref.read(locationProvider);
+                      final option = ref.watch(deliveryOptionProvider);
+                      final quantity = ref.watch(quantityProvider);
+                      final contactInfo = ref.watch(contactInfoProvider);
+
+                      // Create request document
+                      Request request = Request(
+                        requestId: requestRef.id,
+                        creator: FirebaseAuth.instance.currentUser!.uid,
+                        donors: [],
+                        title: title,
+                        reason: reason,
+                        images: uploadedImageUrls,
+                        category: category!,
+                        condition: condition!,
+                        quantity: quantity,
+                        urgency: ref.watch(urgencyProvider),
+                        location: location!,
+                        option: option,
+                        contact: contactInfo,
+                        createdAt: Timestamp.now(),
+                      );
+                      await RequestsFirestoreService().addRequest(request);
+
+                      // Add request ID to user's request list
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser?.uid)
+                          .update({
+                        'donation': FieldValue.arrayUnion([requestRef.path]),
+                      });
+
+                      // Close the form
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text("Failed to create donation: $e")),
+                      );
+                    } finally {
+                      ref.read(isLoadingProvider.notifier).state = false;
+                    }
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('Create'),
+          child: isLoading
+              ? const SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : const Text('Create'),
         ),
       ),
     );
