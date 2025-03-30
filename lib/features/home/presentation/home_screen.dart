@@ -10,10 +10,26 @@ class HomeScreen extends ConsumerWidget {
   HomeScreen({super.key});
 
   final List<List<dynamic>> _quickAccess = [
-    ['Create\nDonation', Icons.grid_view_rounded, AppRoutes.createDonation],
-    ['Create\nRequest', Icons.grid_view_rounded, AppRoutes.createRequest],
-    ['Pickup &\nDrop-off', Icons.grid_view_rounded, AppRoutes.home],
-    ['Urgent Needs', Icons.grid_view_rounded, AppRoutes.home],
+    [
+      ['Create', 'Donation'],
+      Icons.grid_view_rounded,
+      AppRoutes.createDonation
+    ],
+    [
+      ['Create', 'Request'],
+      Icons.grid_view_rounded,
+      AppRoutes.createRequest
+    ],
+    [
+      ['', 'Pickup &\nDrop-off'],
+      Icons.grid_view_rounded,
+      AppRoutes.pickupDropoff
+    ],
+    [
+      ['', 'Urgent Needs'],
+      Icons.grid_view_rounded,
+      AppRoutes.urgencyNeeds
+    ],
   ];
 
   final int _donationLength = 8;
@@ -120,12 +136,28 @@ class HomeScreen extends ConsumerWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 15),
-                      Text(
-                        _quickAccess[index][0],
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
+                      RichText(
+                        text: TextSpan(
+                          text: _quickAccess[index][0][0] == ''
+                              ? null
+                              : '${_quickAccess[index][0][0]}\n',
+                          style:
+                              Theme.of(context).textTheme.titleSmall!.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                          children: [
+                            TextSpan(
+                              text: _quickAccess[index][0][1],
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
