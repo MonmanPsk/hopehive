@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hopehive/core/models/donation.dart';
 
 class DonationPage extends StatelessWidget {
   final Donation donation;
 
   const DonationPage({super.key, required this.donation});
+
+  Future<String> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    try {
+      // Fetch placemarks from the coordinates
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        final Placemark place = placemarks.first;
+        // Construct a readable address
+        return '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.administrativeArea}, ${place.country} ${place.postalCode}';
+      }
+    } catch (e) {
+      // Handle errors (e.g., no internet or invalid coordinates)
+      return 'Unable to fetch address';
+    }
+    return 'No address found';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,40 +244,82 @@ class DonationPage extends StatelessWidget {
                       Container(
                         width: 120,
                         height: 120,
+                        clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Theme.of(context).colorScheme.primary,
                         ),
+                        child: GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              donation.location.latitude,
+                              donation.location.longitude,
+                            ),
+                            zoom: 14,
+                          ),
+                          markers: {
+                            Marker(
+                              markerId: const MarkerId('donation-location'),
+                              position: LatLng(
+                                donation.location.latitude,
+                                donation.location.longitude,
+                              ),
+                            ),
+                          },
+                          zoomControlsEnabled: false,
+                          myLocationEnabled: true,
+                        ),
                       ),
                       const SizedBox(width: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Location: ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '${donation.location.latitude}, ${donation.location.longitude}',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Open in Map',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                          ),
-                        ],
+                      FutureBuilder<String>(
+                        future: _getAddressFromCoordinates(
+                          donation.location.latitude,
+                          donation.location.longitude,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator(
+                                strokeWidth: 2.0); // Show a loading indicator
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Location: ',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    snapshot.data ?? 'No address found',
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Open in Map',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hopehive/core/models/request.dart';
 import 'package:hopehive/core/routes.dart';
 
@@ -6,6 +7,25 @@ class RequestCard extends StatelessWidget {
   const RequestCard({super.key, required this.request});
 
   final Request request;
+
+  Future<String> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    try {
+      // Fetch placemarks from the coordinates
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        final Placemark place = placemarks.first;
+        // Construct a readable address
+        return '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.administrativeArea}, ${place.country} ${place.postalCode}';
+      }
+    } catch (e) {
+      // Handle errors (e.g., no internet or invalid coordinates)
+      return 'Unable to fetch address';
+    }
+    return 'No address found';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +76,39 @@ class RequestCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Flexible(
-                        child: Text(
-                          '${request.location.latitude}, ${request.location.longitude}',
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                        child: FutureBuilder(
+                          future: _getAddressFromCoordinates(
+                            request.location.latitude,
+                            request.location.longitude,
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Text(
+                                'Loading...',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return Text(
+                                snapshot.data.toString(),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ],

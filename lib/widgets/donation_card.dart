@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hopehive/core/models/donation.dart';
 import 'package:hopehive/core/routes.dart';
 
@@ -6,6 +7,25 @@ class DonationCard extends StatelessWidget {
   const DonationCard({super.key, required this.donation});
 
   final Donation donation;
+
+  Future<String> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    try {
+      // Fetch placemarks from the coordinates
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks.isNotEmpty) {
+        final Placemark place = placemarks.first;
+        // Construct a readable address
+        return '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.administrativeArea}, ${place.country} ${place.postalCode}';
+      }
+    } catch (e) {
+      // Handle errors (e.g., no internet or invalid coordinates)
+      return 'Unable to fetch address';
+    }
+    return 'No address found';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,16 +88,39 @@ class DonationCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Expanded(
-                            child: Text(
-                              '${donation.location.latitude}, ${donation.location.longitude}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                            child: FutureBuilder(
+                              future: _getAddressFromCoordinates(
+                                donation.location.latitude,
+                                donation.location.longitude,
+                              ),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Text(
+                                    'Loading...',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else {
+                                  return Text(
+                                    snapshot.data.toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                  );
+                                }
+                              },
                             ),
                           ),
                         ],
