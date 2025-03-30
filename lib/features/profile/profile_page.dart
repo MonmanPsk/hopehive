@@ -59,7 +59,7 @@ class ProfilePage extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${user?.firstname} ${user?.lastname}',
+                            '${user?.firstname ?? ''} ${user?.lastname ?? ''}',
                             style: Theme.of(context).textTheme.titleLarge,
                             overflow: TextOverflow.clip,
                           ),

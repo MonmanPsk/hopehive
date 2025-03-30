@@ -14,6 +14,9 @@ class CreateDonationScreen extends ConsumerWidget {
   CreateDonationScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
   final _bannerErrorNotifier = ValueNotifier<String?>(null);
   final _imageErrorNotifier = ValueNotifier<String?>(null);
   final _selectorErrorNotifier = ValueNotifier<String?>(null);
@@ -194,7 +197,6 @@ class CreateDonationScreen extends ConsumerWidget {
     final quantity = ref.watch(quantityProvider);
     final selectedPickupOption = ref.watch(pickupOptionProvider);
     final contactInfo = ref.watch(contactInfoProvider);
-    final location = ref.watch(locationProvider);
     final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
@@ -281,9 +283,10 @@ class CreateDonationScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Title and Description Fields
-                    ..._buildTextField(context, 'Title', 'Title your donation'),
-                    ..._buildTextField(
-                        context, 'Description', 'Describe your donation',
+                    ..._buildTextField(context, 'Title', 'Title your donation',
+                        _titleController),
+                    ..._buildTextField(context, 'Description',
+                        'Describe your donation', _descriptionController,
                         maxLines: 5),
 
                     // Images Section
@@ -469,11 +472,13 @@ class CreateDonationScreen extends ConsumerWidget {
 
   // Helper methods for UI components
   List<Widget> _buildTextField(BuildContext context, String label, String hint,
+      TextEditingController controller,
       {int maxLines = 1}) {
     return [
       Text(label, style: Theme.of(context).textTheme.labelLarge),
       const SizedBox(height: 8),
       TextFormField(
+        controller: controller,
         maxLines: maxLines,
         decoration: InputDecoration(hintText: hint),
         validator: (value) {
@@ -887,8 +892,8 @@ class CreateDonationScreen extends ConsumerWidget {
                           .doc();
 
                       // Retrieve form values
-                      final title = ref.read(titleProvider);
-                      final description = ref.read(descriptionProvider);
+                      final title = _titleController.text.trim();
+                      final description = _descriptionController.text.trim();
                       final category = selectedCategory;
                       final condition = selectedItemCondition;
                       final location = ref.read(locationProvider);
@@ -920,7 +925,7 @@ class CreateDonationScreen extends ConsumerWidget {
                           .collection('users')
                           .doc(FirebaseAuth.instance.currentUser?.uid)
                           .update({
-                        'donation': FieldValue.arrayUnion([donationRef.id]),
+                        'donation': FieldValue.arrayUnion([donationRef.path]),
                       });
 
                       // Close the form
@@ -928,6 +933,7 @@ class CreateDonationScreen extends ConsumerWidget {
                         Navigator.pop(context);
                       }
                     } catch (e) {
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                             content: Text("Failed to create donation: $e")),
