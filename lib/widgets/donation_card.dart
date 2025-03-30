@@ -10,7 +10,8 @@ class DonationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, AppRoutes.donation),
+      onTap: () =>
+          Navigator.pushNamed(context, AppRoutes.donation, arguments: donation),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(10),

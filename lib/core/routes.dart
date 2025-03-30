@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hopehive/core/models/donation.dart';
+import 'package:hopehive/core/models/request.dart';
 import 'package:hopehive/features/donate/donation_page.dart';
 import 'package:hopehive/features/donate/presentation/create_donation_screen.dart';
 import 'package:hopehive/features/home/presentation/pickup_dropoff_screen.dart';
@@ -45,9 +47,11 @@ class AppRoutes {
       case editProfile:
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case donation:
-        return MaterialPageRoute(builder: (_) => const DonationPage());
+        final args = settings.arguments as Donation;
+        return MaterialPageRoute(builder: (_) => DonationPage(donation: args));
       case request:
-        return MaterialPageRoute(builder: (_) => const RequestPage());
+        final args = settings.arguments as Request;
+        return MaterialPageRoute(builder: (_) => RequestPage(request: args));
       case createDonation:
         return MaterialPageRoute(builder: (_) => CreateDonationScreen());
       case createRequest:

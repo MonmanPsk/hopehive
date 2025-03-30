@@ -16,7 +16,8 @@ class RequestCard extends StatelessWidget {
     };
 
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, AppRoutes.request),
+      onTap: () =>
+          Navigator.pushNamed(context, AppRoutes.request, arguments: request),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 10),
