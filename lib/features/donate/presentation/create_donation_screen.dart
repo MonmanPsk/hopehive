@@ -182,11 +182,12 @@ class CreateDonationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final images = ref.watch(imageProvider);
-    final quantity = ref.watch(quantityProvider);
     final selectedCategory = ref.watch(categoryProvider);
     final categories = ref.watch(categoryListProvider);
     final selectedItemCondition = ref.watch(itemConditionProvider);
     final itemConditions = ref.watch(itemConditionListProvider);
+    final quantity = ref.watch(quantityProvider);
+    final selectedPickupOption = ref.watch(pickupOptionProvider);
     final contactInfo = ref.watch(contactInfoProvider);
     final primaryColor = Theme.of(context).primaryColor;
 
@@ -280,8 +281,7 @@ class CreateDonationScreen extends ConsumerWidget {
                         maxLines: 5),
 
                     // Images Section
-                    _buildSectionTitle(context, 'Images'),
-                    const SizedBox(height: 8),
+                    ..._buildSectionTitle(context, 'Images'),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -299,7 +299,7 @@ class CreateDonationScreen extends ConsumerWidget {
                               );
                             }
                           },
-                          child: _buildUploadImageBox(),
+                          child: _buildUploadImageBox(primaryColor),
                         ),
                         ...images.map(
                           (image) => GestureDetector(
@@ -335,7 +335,7 @@ class CreateDonationScreen extends ConsumerWidget {
                     const SizedBox(height: 20),
 
                     // Category Selector
-                    ..._buildDropdown(
+                    _buildDropdown(
                       context: context,
                       title: 'Category',
                       selectedItem: selectedCategory,
@@ -350,8 +350,10 @@ class CreateDonationScreen extends ConsumerWidget {
                       ),
                     ),
 
+                    const SizedBox(height: 20),
+
                     // Item Condition Selector
-                    ..._buildDropdown(
+                    _buildDropdown(
                       context: context,
                       title: 'Item Condition',
                       selectedItem: selectedItemCondition,
@@ -372,7 +374,7 @@ class CreateDonationScreen extends ConsumerWidget {
                         return error != null
                             ? Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 10, bottom: 20),
+                                    const EdgeInsets.only(left: 10, top: 5),
                                 child: Text(
                                   error,
                                   style: const TextStyle(color: Colors.red),
@@ -382,9 +384,50 @@ class CreateDonationScreen extends ConsumerWidget {
                       },
                     ),
 
+                    const SizedBox(height: 20),
+
                     // Quantity Selector
                     ..._buildQuantitySelector(
                         context, ref, quantity, primaryColor),
+
+                    // Location
+                    Row(
+                      children: [
+                        Text(
+                          'Location',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        const SizedBox(width: 10),
+                        Container(
+                          height: 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Pickup/Drop-off Option
+                    ..._buildSectionTitle(context, 'Pickup/Drop-off Option'),
+                    _buildOptionSelector(
+                        context, ref, selectedPickupOption, primaryColor),
+
+                    const SizedBox(height: 20),
 
                     // Contact Info Section
                     _buildContactInfoSection(
@@ -438,26 +481,29 @@ class CreateDonationScreen extends ConsumerWidget {
     ];
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(title, style: Theme.of(context).textTheme.labelLarge);
+  List<Widget> _buildSectionTitle(BuildContext context, String title) {
+    return [
+      Text(title, style: Theme.of(context).textTheme.labelLarge),
+      const SizedBox(height: 8),
+    ];
   }
 
-  Widget _buildUploadImageBox() {
+  Widget _buildUploadImageBox(Color primaryColor) {
     return Container(
       width: 110,
       height: 110,
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F7F7),
-        borderRadius: BorderRadius.circular(8),
+        color: primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.file_upload_outlined, color: Colors.teal, size: 24),
-          SizedBox(height: 4),
+          Icon(Icons.file_upload_outlined, color: primaryColor, size: 24),
+          const SizedBox(height: 4),
           Text(
             'Upload Image',
-            style: TextStyle(color: Colors.teal, fontSize: 12),
+            style: TextStyle(color: primaryColor, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],
@@ -465,56 +511,53 @@ class CreateDonationScreen extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildDropdown({
+  Widget _buildDropdown({
     required BuildContext context,
     required String title,
     required String? selectedItem,
     required List<String> items,
     required VoidCallback onTap,
   }) {
-    return [
-      Row(
-        children: [
-          Text(title, style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(width: 10),
-          GestureDetector(
-            onTap: onTap,
-            child: Container(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    selectedItem ?? 'Select $title',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: selectedItem == null
-                              ? Colors.grey[400]
-                              : Theme.of(context).primaryColor,
-                        ),
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(Icons.keyboard_arrow_down,
-                      color: Theme.of(context).primaryColor, size: 24),
-                ],
-              ),
+    return Row(
+      children: [
+        Text(title, style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(width: 10),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  selectedItem ?? 'Select $title',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: selectedItem == null
+                            ? Colors.grey[400]
+                            : Theme.of(context).primaryColor,
+                      ),
+                ),
+                const SizedBox(width: 5),
+                Icon(Icons.keyboard_arrow_down,
+                    color: Theme.of(context).primaryColor, size: 24),
+              ],
             ),
           ),
-        ],
-      ),
-      const SizedBox(height: 20),
-    ];
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildQuantitySelector(
@@ -583,6 +626,55 @@ class CreateDonationScreen extends ConsumerWidget {
       ),
       const SizedBox(height: 20),
     ];
+  }
+
+  Widget _buildOptionSelector(BuildContext context, WidgetRef ref,
+      String selectedOption, Color primaryColor) {
+    return Row(
+      children: options.map((option) {
+        final isSelected = selectedOption == option['label'];
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              ref.read(pickupOptionProvider.notifier).state =
+                  option['label'] as String;
+            },
+            child: Container(
+              margin: option['label'] == 'Any'
+                  ? null
+                  : const EdgeInsets.only(right: 5),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color:
+                    isSelected ? primaryColor.withOpacity(0.1) : Colors.white,
+                border: Border.all(
+                  color: isSelected ? primaryColor : Colors.grey[300]!,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    option['icon'] as IconData,
+                    color: isSelected ? primaryColor : Colors.grey,
+                    size: 25,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    option['label'] as String,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: isSelected ? primaryColor : Colors.grey,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   Widget _buildContactInfoSection(BuildContext context, WidgetRef ref,

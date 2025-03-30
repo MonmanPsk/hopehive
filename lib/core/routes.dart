@@ -47,7 +47,7 @@ class AppRoutes {
       case createDonation:
         return MaterialPageRoute(builder: (_) => CreateDonationScreen());
       case createRequest:
-        return MaterialPageRoute(builder: (_) => const CreateRequestScreen());
+        return MaterialPageRoute(builder: (_) => CreateRequestScreen());
       default:
         return MaterialPageRoute(builder: (_) => AuthPage());
     }

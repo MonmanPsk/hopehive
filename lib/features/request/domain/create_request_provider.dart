@@ -13,8 +13,8 @@ final categoryListProvider = Provider<List<String>>((ref) => [
       'Sports & Recreation',
       'Miscellaneous & Other',
     ]);
-final itemConditionProvider = StateProvider<String?>((ref) => null);
-final itemConditionListProvider = Provider<List<String>>((ref) => [
+final conditionPreferenceProvider = StateProvider<String?>((ref) => null);
+final conditionPreferenceListProvider = Provider<List<String>>((ref) => [
       'New',
       'Like New',
       'Gently Used',
@@ -22,5 +22,6 @@ final itemConditionListProvider = Provider<List<String>>((ref) => [
       'Heavily Used',
     ]);
 final quantityProvider = StateProvider<int>((ref) => 1);
-final pickupOptionProvider = StateProvider<String>((ref) => 'Pickup');
+final deliveryOptionProvider = StateProvider<String>((ref) => 'Delivery');
+final urgencyProvider = StateProvider<String>((ref) => 'Flexible');
 final contactInfoProvider = StateProvider<List<Map<String, String?>>>((ref) => []);
